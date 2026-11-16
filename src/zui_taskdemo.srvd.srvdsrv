@@ -1,0 +1,4 @@
+@EndUserText.label: 'Task Management Service'
+define service ZUI_TASKDEMO {
+  expose ZC_TASKDEMO as Tasks;
+}

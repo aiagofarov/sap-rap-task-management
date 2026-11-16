@@ -1,0 +1,29 @@
+managed implementation in class zbp_i_taskdemo unique;
+strict ( 2 );
+
+define behavior for ZI_TASKDEMO alias Task
+persistent table ztaskdemo
+lock master
+authorization master ( none )
+{
+  create;
+  update;
+  delete;
+
+  field ( numbering : managed, readonly ) TaskId;
+  field ( readonly ) CreatedAt;
+
+  determination setCreatedAt on modify { create; }
+
+  validation validateTitle on save { create; update; }
+
+  action completeTask result[1] $self;
+
+  mapping for ztaskdemo
+  {
+    TaskId    = task_id;
+    Title     = title;
+    Status    = status;
+    CreatedAt = created_at;
+  }
+}
