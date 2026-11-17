@@ -185,4 +185,65 @@ RAP generates `TaskId`, and the determination sets `CreatedAt`.
 ### Read Tasks
 
 ```http
-GET <SERVICE_ROOT>/
+GET <SERVICE_ROOT>/Tasks
+```
+
+**Response:** Collection of task entities.
+
+### Update and Delete
+
+Standard update and delete operations are enabled in both the base and projection behavior definitions.
+
+### Complete a Task
+
+`completeTask` is exposed as an OData V4 bound action.
+
+The action is invoked for a specific task using the action URL defined in the service metadata.
+
+For a task with `Status = OPEN`, the action changes its status to `DONE` and returns the updated entity.
+
+### Validation Error
+
+Creating or updating a task with an empty title returns:
+
+```http
+HTTP/1.1 400 Bad Request
+```
+
+```text
+Task title cannot be empty
+```
+
+### Invalid State Transition
+
+Calling `completeTask` for a task whose status is already `DONE` returns:
+
+```http
+HTTP/1.1 400 Bad Request
+```
+
+```text
+Only OPEN tasks can be completed
+```
+
+The task remains unchanged.
+
+## Testing
+
+The OData V4 service was tested using the service binding's interactive API tools.
+
+| Scenario | Result |
+|---|---|
+| Create a task | HTTP 201; generated `TaskId` |
+| Create a task | `CreatedAt` populated automatically |
+| Create a task with empty `Title` | HTTP 400; validation error |
+| Execute `completeTask` for an `OPEN` task | Status changed to `DONE` |
+| Execute `completeTask` for a `DONE` task | HTTP 400; business error |
+
+## Deployment
+
+### Requirements
+
+- SAP BTP ABAP Environment
+- Eclipse with ABAP Development Tools (ADT)
+- abapGit support
